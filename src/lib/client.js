@@ -7,10 +7,6 @@ export const getProduct = async (slug) => {
   return mockProducts.find((product) => product.slug === slug);
 };
 
-export const getFeaturedProducts = async () => {
-  return mockProducts.filter((product) => product.featured);
-};
-
 export const getBanners = async () => {
   return mockBanners;
 };
