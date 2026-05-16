@@ -75,7 +75,7 @@ const pageContent: Record<
     sections: [
       {
         title: 'Shipping estimate',
-        body: 'The demo checkout uses a flat shipping estimate. A production store can replace this with carrier or location-based rates.',
+        body: 'Checkout uses the shipping amount configured in the admin CMS. Carrier or location-based rates can be added behind the same settings surface.',
       },
       {
         title: 'Delivery updates',
@@ -126,7 +126,7 @@ const pageContent: Record<
     sections: [
       {
         title: 'Order lookup',
-        body: 'The current order tracking form is available inside the account page after signing in to the demo dashboard.',
+        body: 'The order tracking form is available inside the account page after signing in.',
       },
       {
         title: 'What you need',
@@ -161,7 +161,7 @@ const pageContent: Record<
     sections: [
       {
         title: 'Current data storage',
-        body: 'This demo stores cart and wishlist data in your browser localStorage. No backend profile or payment data is collected.',
+        body: 'Cart and wishlist data are stored in your browser. Orders are stored by the backend CMS data store after checkout.',
       },
       {
         title: 'Production note',
@@ -175,8 +175,8 @@ const pageContent: Record<
     description: 'Review the shopping terms for UDT Store.',
     sections: [
       {
-        title: 'Demo checkout',
-        body: 'The checkout form is a functional front-end flow and does not charge cards or create real orders.',
+        title: 'Checkout',
+        body: 'Checkout creates an order record in the CMS data store. Payment collection requires a payment provider integration.',
       },
       {
         title: 'Production note',
@@ -187,11 +187,11 @@ const pageContent: Record<
   login: {
     title: 'Login',
     eyebrow: 'Account',
-    description: 'Sign in through the account page to access the demo dashboard.',
+    description: 'Sign in through the account page to access your customer dashboard.',
     sections: [
       {
-        title: 'Demo sign in',
-        body: 'The account form accepts any valid-looking email and password, then opens the local dashboard without calling a backend.',
+        title: 'Customer sign in',
+        body: 'The customer account surface is ready to connect to a customer authentication provider.',
       },
     ],
     ctaLabel: 'Go to Account',
@@ -204,7 +204,7 @@ const pageContent: Record<
     sections: [
       {
         title: 'Current flow',
-        body: 'Use the account page to enter the demo dashboard. Production registration can be added with an auth provider or custom API.',
+        body: 'Use the account page for the current customer dashboard. Registration can be added with an auth provider or custom API.',
       },
     ],
     ctaLabel: 'Open Account',
@@ -213,7 +213,7 @@ const pageContent: Record<
   'forgot-password': {
     title: 'Forgot Password',
     eyebrow: 'Account',
-    description: 'Password recovery is a placeholder until real authentication is connected.',
+    description: 'Password recovery can be connected once customer authentication is enabled.',
     sections: [
       {
         title: 'Recovery flow',

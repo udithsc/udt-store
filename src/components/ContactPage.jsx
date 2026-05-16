@@ -13,6 +13,7 @@ const ContactPage = () => {
     subject: '',
     message: '',
   });
+  const [submitMessage, setSubmitMessage] = useState('');
 
   const handleInputChange = (e) => {
     setFormData({
@@ -23,8 +24,9 @@ const ContactPage = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-    // Handle form submission here
+    setSubmitMessage(
+      `Thanks, ${formData.name || 'there'}. Your message is ready for support follow-up.`
+    );
   };
 
   const storeLocations = [
@@ -166,6 +168,11 @@ const ContactPage = () => {
                 >
                   Send Message
                 </button>
+                {submitMessage && (
+                  <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-3">
+                    {submitMessage}
+                  </p>
+                )}
               </form>
             </div>
           </div>

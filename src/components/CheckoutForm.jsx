@@ -4,29 +4,75 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import useCartStore from '../stores/cartStore';
+import useCMSStore from '../stores/cmsStore';
 
 const CheckoutForm = () => {
   const router = useRouter();
   const { cartItems, totalPrice } = useCartStore();
+  const storeSettings = useCMSStore((state) => state.storeSettings);
+  const createOrder = useCMSStore((state) => state.createOrder);
   const [selectedPayment, setSelectedPayment] = useState('bank-transfer');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [checkoutError, setCheckoutError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setCheckoutError('');
+
     if (cartItems.length === 0) {
       router.push('/cart');
       return;
     }
     if (!agreedToTerms) {
-      alert('Please agree to the terms and conditions');
+      setCheckoutError('Please agree to the terms and conditions.');
       return;
     }
-    router.push('/success');
+
+    const formData = new FormData(e.currentTarget);
+    setIsSubmitting(true);
+
+    try {
+      const orderId = await createOrder({
+        customer: {
+          name: `${formData.get('firstName')} ${formData.get('lastName')}`,
+          email: formData.get('email'),
+          phone: formData.get('phone'),
+        },
+        address: {
+          company: formData.get('company'),
+          country: formData.get('country'),
+          street: formData.get('street'),
+          apartment: formData.get('apartment'),
+          city: formData.get('city'),
+          state: formData.get('state'),
+          postcode: formData.get('postcode'),
+        },
+        notes: formData.get('notes'),
+        paymentMethod: selectedPayment,
+        items: cartItems.map((item) => ({
+          _id: item._id,
+          name: item.name,
+          slug: item.slug,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+        subtotal,
+        shipping,
+        tax,
+        total,
+      });
+
+      router.push(`/success?order=${encodeURIComponent(orderId)}`);
+    } catch (error) {
+      setCheckoutError(error.message || 'Unable to place order. Please try again.');
+      setIsSubmitting(false);
+    }
   };
 
   const subtotal = totalPrice;
-  const shipping = 25.0;
-  const tax = subtotal * 0.2; // 20% tax
+  const shipping = Number(storeSettings.shippingCost) || 0;
+  const tax = subtotal * (Number(storeSettings.taxRate) || 0);
   const total = subtotal + shipping + tax;
 
   return (
@@ -85,6 +131,7 @@ const CheckoutForm = () => {
                         First Name
                       </label>
                       <input
+                        name="firstName"
                         type="text"
                         required
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#629D23] focus:border-transparent"
@@ -96,6 +143,7 @@ const CheckoutForm = () => {
                         Last Name
                       </label>
                       <input
+                        name="lastName"
                         type="text"
                         required
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#629D23] focus:border-transparent"
@@ -109,6 +157,7 @@ const CheckoutForm = () => {
                       Company Name (Optional)
                     </label>
                     <input
+                      name="company"
                       type="text"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       placeholder="Company Name"
@@ -118,6 +167,7 @@ const CheckoutForm = () => {
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
                     <select
+                      name="country"
                       required
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     >
@@ -134,6 +184,7 @@ const CheckoutForm = () => {
                       Street Address
                     </label>
                     <input
+                      name="street"
                       type="text"
                       required
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -146,6 +197,7 @@ const CheckoutForm = () => {
                       Apartment, suite, unit etc. (Optional)
                     </label>
                     <input
+                      name="apartment"
                       type="text"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       placeholder="Apartment, suite, unit etc."
@@ -157,6 +209,7 @@ const CheckoutForm = () => {
                       Town / City
                     </label>
                     <input
+                      name="city"
                       type="text"
                       required
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -169,6 +222,7 @@ const CheckoutForm = () => {
                       State / County
                     </label>
                     <input
+                      name="state"
                       type="text"
                       required
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -181,6 +235,7 @@ const CheckoutForm = () => {
                       Postcode / ZIP
                     </label>
                     <input
+                      name="postcode"
                       type="text"
                       required
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
@@ -194,6 +249,7 @@ const CheckoutForm = () => {
                         Email address
                       </label>
                       <input
+                        name="email"
                         type="email"
                         required
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#629D23] focus:border-transparent"
@@ -203,6 +259,7 @@ const CheckoutForm = () => {
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
                       <input
+                        name="phone"
                         type="tel"
                         required
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#629D23] focus:border-transparent"
@@ -240,6 +297,7 @@ const CheckoutForm = () => {
                       Order notes (Optional)
                     </h3>
                     <textarea
+                      name="notes"
                       rows={4}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                       placeholder="Notes about your order, e.g. special notes for delivery."
@@ -392,11 +450,18 @@ const CheckoutForm = () => {
                     </label>
                   </div>
 
+                  {checkoutError && (
+                    <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                      {checkoutError}
+                    </div>
+                  )}
+
                   <button
                     type="submit"
+                    disabled={isSubmitting}
                     className="w-full bg-primary text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-700 transition-colors duration-200"
                   >
-                    Place Order
+                    {isSubmitting ? 'Placing Order...' : 'Place Order'}
                   </button>
                 </div>
               </div>

@@ -1,11 +1,8 @@
 import { Suspense } from 'react';
-import { getProducts } from '../../lib/client';
 import { Layout } from '../../components';
 import ShopContent from '../../components/ShopContent';
 
-async function ShopPage() {
-  const products = await getProducts();
-
+function ShopPage() {
   return (
     <Layout>
       <Suspense
@@ -13,7 +10,7 @@ async function ShopPage() {
           <div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>
         }
       >
-        <ShopContent products={products} />
+        <ShopContent />
       </Suspense>
     </Layout>
   );

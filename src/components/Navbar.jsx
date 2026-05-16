@@ -14,11 +14,13 @@ import {
 import { FiPhone } from 'react-icons/fi';
 
 import useCartStore from '../stores/cartStore';
+import useCMSStore from '../stores/cmsStore';
 import { useWishlistCount } from '../stores/wishlistStore';
 
 const Navbar = () => {
   const router = useRouter();
   const { totalQuantities } = useCartStore();
+  const storeSettings = useCMSStore((state) => state.storeSettings);
   const wishlistCount = useWishlistCount();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -70,7 +72,9 @@ const Navbar = () => {
             <div className="flex items-center">
               <Link href="/" className="flex items-center">
                 <AiOutlineShopping className="w-12 h-12 ml-2" />
-                <div className="text-2xl font-bold text-gray-900">UDT STORE</div>
+                <div className="text-2xl font-bold text-gray-900">
+                  {storeSettings.storeName || 'UDT STORE'}
+                </div>
               </Link>
             </div>
 
@@ -100,7 +104,7 @@ const Navbar = () => {
                 <FiPhone className="w-5 h-5" />
                 <div className="text-sm">
                   <div className="text-xs">Customer Service</div>
-                  <div className="font-semibold">(800) 060-0730</div>
+                  <div className="font-semibold">{storeSettings.supportPhone}</div>
                 </div>
               </div>
 
@@ -175,6 +179,9 @@ const Navbar = () => {
               <Link href="/account" className="hover:text-green-200 transition-colors font-medium">
                 Account
               </Link>
+              <Link href="/admin" className="hover:text-green-200 transition-colors font-medium">
+                Admin
+              </Link>
               <Link href="/about" className="hover:text-green-200 transition-colors font-medium">
                 About Us
               </Link>
@@ -190,7 +197,7 @@ const Navbar = () => {
             <div className="hidden md:flex items-center space-x-6 ml-auto text-white">
               <div className="text-sm">
                 <span>Need help? Call Us: </span>
-                <span className="font-semibold">+ 1800 900</span>
+                <span className="font-semibold">{storeSettings.supportPhone}</span>
               </div>
               <div className="flex items-center space-x-4">
                 <Link href="/wishlist" className="flex items-center space-x-1 hover:text-green-200">
@@ -248,6 +255,13 @@ const Navbar = () => {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Account
+            </Link>
+            <Link
+              href="/admin"
+              className="block py-3 px-2 text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Admin
             </Link>
             <Link
               href="/about"

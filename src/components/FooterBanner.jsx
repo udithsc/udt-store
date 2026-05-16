@@ -3,8 +3,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { AiOutlineRight } from 'react-icons/ai';
 
-const FooterBanner = ({
-  footerBanner: {
+const FooterBanner = ({ footerBanner = {} }) => {
+  const {
     discount,
     largeText1,
     largeText2,
@@ -15,8 +15,7 @@ const FooterBanner = ({
     product,
     buttonText,
     image,
-  },
-}) => {
+  } = footerBanner;
   return (
     <section className="py-8 md:py-16 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4">
@@ -29,7 +28,7 @@ const FooterBanner = ({
                 {smallText && (
                   <p className="text-sm text-gray-500 uppercase tracking-wide">{smallText}</p>
                 )}
-                
+
                 {/* Discount Badge */}
                 {discount && (
                   <div>
@@ -38,30 +37,32 @@ const FooterBanner = ({
                     </span>
                   </div>
                 )}
-                
+
                 {/* Main Headings */}
                 <div className="space-y-2">
                   {largeText1 && (
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">{largeText1}</h3>
+                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
+                      {largeText1}
+                    </h3>
                   )}
                   {largeText2 && (
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">{largeText2}</h3>
+                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900">
+                      {largeText2}
+                    </h3>
                   )}
                   {midText && (
                     <h3 className="text-xl md:text-2xl font-bold text-gray-900">{midText}</h3>
                   )}
                 </div>
-                
+
                 {/* Description */}
                 {desc && (
                   <p className="text-gray-600 leading-relaxed text-sm md:text-base">{desc}</p>
                 )}
-                
+
                 {/* Sale Time */}
-                {saleTime && (
-                  <p className="text-lg text-gray-600 font-medium">{saleTime}</p>
-                )}
-                
+                {saleTime && <p className="text-lg text-gray-600 font-medium">{saleTime}</p>}
+
                 {/* Button */}
                 {buttonText && (
                   <div>
@@ -81,7 +82,13 @@ const FooterBanner = ({
               <div className="flex-1 md:flex-shrink-0 md:w-auto lg:w-96 p-6 md:p-8">
                 <div className="relative flex justify-center">
                   <Image
-                    src={image.startsWith('//') ? `https:${image}` : image.startsWith('/') ? image : `/${image}`}
+                    src={
+                      image.startsWith('//')
+                        ? `https:${image}`
+                        : image.startsWith('/')
+                          ? image
+                          : `/${image}`
+                    }
                     alt="footer-banner"
                     width={400}
                     height={400}

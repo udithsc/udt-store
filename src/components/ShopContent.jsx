@@ -15,9 +15,13 @@ import { HiOutlineViewGrid, HiOutlineViewList } from 'react-icons/hi';
 import { BsFilter } from 'react-icons/bs';
 import useCartStore from '../stores/cartStore';
 import useWishlistStore from '../stores/wishlistStore';
+import useCMSStore from '../stores/cmsStore';
 
-const ShopContent = ({ products }) => {
+const ShopContent = () => {
   const searchParams = useSearchParams();
+  const cmsProducts = useCMSStore((state) => state.products);
+  const isLoaded = useCMSStore((state) => state.isLoaded);
+  const activeProducts = cmsProducts || [];
   const [sortBy, setSortBy] = useState('name');
   const [filterCategory, setFilterCategory] = useState('all');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 2000 });
@@ -57,7 +61,7 @@ const ShopContent = ({ products }) => {
   }, [categories, searchParams]);
 
   const filteredAndSortedProducts = useMemo(() => {
-    let filtered = products || [];
+    let filtered = activeProducts || [];
     const searchQuery = searchParams.get('search')?.trim().toLowerCase();
 
     // Filter by category
@@ -94,7 +98,7 @@ const ShopContent = ({ products }) => {
     });
 
     return filtered;
-  }, [products, filterCategory, priceRange, sortBy, searchParams]);
+  }, [activeProducts, filterCategory, priceRange, sortBy, searchParams]);
 
   const renderStars = (rating) => {
     const stars = [];
@@ -256,130 +260,141 @@ const ShopContent = ({ products }) => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar Filters */}
-          <div className={`lg:w-64 ${showFilters ? 'block' : 'hidden lg:block'}`}>
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h3 className="text-lg font-semibold mb-4">Filters</h3>
+        {!isLoaded && (
+          <div className="bg-white rounded-lg shadow-sm p-8 text-center text-gray-600">
+            Loading products...
+          </div>
+        )}
+        {isLoaded && (
+          <div className="flex flex-col lg:flex-row gap-8">
+            {/* Sidebar Filters */}
+            <div className={`lg:w-64 ${showFilters ? 'block' : 'hidden lg:block'}`}>
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h3 className="text-lg font-semibold mb-4">Filters</h3>
 
-              {/* Category Filter */}
-              <div className="mb-6">
-                <h4 className="font-medium mb-3">Category</h4>
-                <div className="space-y-2">
-                  {categories.map((category) => (
-                    <label key={category} className="flex items-center">
-                      <input
-                        type="radio"
-                        name="category"
-                        value={category}
-                        checked={filterCategory === category}
-                        onChange={(e) => setFilterCategory(e.target.value)}
-                        className="mr-2"
-                      />
-                      <span className="text-sm capitalize">
-                        {category === 'all' ? 'All Categories' : category}
-                      </span>
-                    </label>
-                  ))}
+                {/* Category Filter */}
+                <div className="mb-6">
+                  <h4 className="font-medium mb-3">Category</h4>
+                  <div className="space-y-2">
+                    {categories.map((category) => (
+                      <label key={category} className="flex items-center">
+                        <input
+                          type="radio"
+                          name="category"
+                          value={category}
+                          checked={filterCategory === category}
+                          onChange={(e) => setFilterCategory(e.target.value)}
+                          className="mr-2"
+                        />
+                        <span className="text-sm capitalize">
+                          {category === 'all' ? 'All Categories' : category}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
-              </div>
 
-              {/* Price Range */}
-              <div className="mb-6">
-                <h4 className="font-medium mb-3">Price Range</h4>
-                <div className="space-y-3">
-                  <div>
-                    <input
-                      type="range"
-                      min="0"
-                      max="2000"
-                      value={priceRange.max}
-                      onChange={(e) =>
-                        setPriceRange({ ...priceRange, max: parseInt(e.target.value) })
-                      }
-                      className="w-full"
-                    />
-                    <div className="flex justify-between text-sm text-gray-500 mt-1">
-                      <span>$0</span>
-                      <span>${priceRange.max}</span>
+                {/* Price Range */}
+                <div className="mb-6">
+                  <h4 className="font-medium mb-3">Price Range</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="2000"
+                        value={priceRange.max}
+                        onChange={(e) =>
+                          setPriceRange({ ...priceRange, max: parseInt(e.target.value) })
+                        }
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-sm text-gray-500 mt-1">
+                        <span>$0</span>
+                        <span>${priceRange.max}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Main Content */}
-          <div className="flex-1">
-            {/* Top Bar */}
-            <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="lg:hidden flex items-center gap-2 px-4 py-2 border rounded-lg"
-                  >
-                    <BsFilter />
-                    Filters
-                  </button>
-                  <span className="text-gray-600">
-                    Showing {filteredAndSortedProducts.length} products
-                    {searchParams.get('search') && ` for "${searchParams.get('search')}"`}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  {/* View Mode Toggle */}
-                  <div className="flex border rounded-lg overflow-hidden">
+            {/* Main Content */}
+            <div className="flex-1">
+              {/* Top Bar */}
+              <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div className="flex items-center gap-4">
                     <button
-                      onClick={() => setViewMode('grid')}
-                      className={`p-2 ${viewMode === 'grid' ? 'bg-green-600 text-white' : 'text-gray-600'}`}
+                      onClick={() => setShowFilters(!showFilters)}
+                      className="lg:hidden flex items-center gap-2 px-4 py-2 border rounded-lg"
                     >
-                      <HiOutlineViewGrid />
+                      <BsFilter />
+                      Filters
                     </button>
-                    <button
-                      onClick={() => setViewMode('list')}
-                      className={`p-2 ${viewMode === 'list' ? 'bg-green-600 text-white' : 'text-gray-600'}`}
-                    >
-                      <HiOutlineViewList />
-                    </button>
+                    <span className="text-gray-600">
+                      Showing {filteredAndSortedProducts.length} products
+                      {searchParams.get('search') && ` for "${searchParams.get('search')}"`}
+                    </span>
                   </div>
 
-                  {/* Sort Dropdown */}
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="border rounded-lg px-3 py-2"
-                  >
-                    <option value="name">Sort by Name</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
-                    <option value="rating">Highest Rated</option>
-                  </select>
+                  <div className="flex items-center gap-4">
+                    {/* View Mode Toggle */}
+                    <div className="flex border rounded-lg overflow-hidden">
+                      <button
+                        onClick={() => setViewMode('grid')}
+                        className={`p-2 ${viewMode === 'grid' ? 'bg-green-600 text-white' : 'text-gray-600'}`}
+                      >
+                        <HiOutlineViewGrid />
+                      </button>
+                      <button
+                        onClick={() => setViewMode('list')}
+                        className={`p-2 ${viewMode === 'list' ? 'bg-green-600 text-white' : 'text-gray-600'}`}
+                      >
+                        <HiOutlineViewList />
+                      </button>
+                    </div>
+
+                    {/* Sort Dropdown */}
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="border rounded-lg px-3 py-2"
+                    >
+                      <option value="name">Sort by Name</option>
+                      <option value="price-low">Price: Low to High</option>
+                      <option value="price-high">Price: High to Low</option>
+                      <option value="rating">Highest Rated</option>
+                    </select>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Products Grid/List */}
-            <div
-              className={
-                viewMode === 'grid'
-                  ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
-                  : 'space-y-6'
-              }
-            >
-              {filteredAndSortedProducts.map((product) => (
-                <ProductCard key={product._id} product={product} isListView={viewMode === 'list'} />
-              ))}
-            </div>
-
-            {filteredAndSortedProducts.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">No products found matching your criteria.</p>
+              {/* Products Grid/List */}
+              <div
+                className={
+                  viewMode === 'grid'
+                    ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'
+                    : 'space-y-6'
+                }
+              >
+                {filteredAndSortedProducts.map((product) => (
+                  <ProductCard
+                    key={product._id}
+                    product={product}
+                    isListView={viewMode === 'list'}
+                  />
+                ))}
               </div>
-            )}
+
+              {filteredAndSortedProducts.length === 0 && (
+                <div className="text-center py-12">
+                  <p className="text-gray-500 text-lg">No products found matching your criteria.</p>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

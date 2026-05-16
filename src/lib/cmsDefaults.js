@@ -1,0 +1,15 @@
+export const emptyProduct = {
+  _id: '',
+  name: '',
+  slug: '',
+  price: 0,
+  originalPrice: '',
+  image: ['/a64b345016e96adfb8849af5521c8e0ecfe8f027-555x555.webp'],
+  details: '',
+  featured: false,
+  category: 'Accessories',
+  rating: 4.5,
+  reviews: 0,
+  inStock: true,
+  badges: [],
+};

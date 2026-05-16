@@ -7,6 +7,20 @@ import { AiOutlineHeart, AiFillHeart, AiOutlineShoppingCart } from 'react-icons/
 import useWishlistStore from '../stores/wishlistStore';
 import useCartStore from '../stores/cartStore';
 
+const getImageSrc = (image) => {
+  const primaryImage = image?.[0];
+
+  if (!primaryImage) {
+    return '/a64b345016e96adfb8849af5521c8e0ecfe8f027-555x555.webp';
+  }
+
+  if (primaryImage.startsWith('//')) {
+    return `https:${primaryImage}`;
+  }
+
+  return primaryImage.startsWith('/') ? primaryImage : `/${primaryImage}`;
+};
+
 const Product = ({ product }) => {
   const [isClient, setIsClient] = useState(false);
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore();
@@ -44,7 +58,7 @@ const Product = ({ product }) => {
           <Link href={`/product/${slug}`}>
             <div className="w-full h-full bg-gray-50 flex items-center justify-center">
               <Image
-                src={image && image[0] ? (image[0].startsWith('//') ? `https:${image[0]}` : image[0].startsWith('/') ? image[0] : `/${image[0]}`) : '/placeholder-product.jpg'}
+                src={getImageSrc(image)}
                 alt={name}
                 width={400}
                 height={400}
@@ -89,7 +103,9 @@ const Product = ({ product }) => {
             <div className="flex items-center space-x-1">
               <div className="flex text-yellow-400">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <span key={star} className="text-sm">★</span>
+                  <span key={star} className="text-sm">
+                    ★
+                  </span>
                 ))}
               </div>
               <span className="text-sm text-gray-500 ml-1">(4.5)</span>
@@ -106,7 +122,7 @@ const Product = ({ product }) => {
       <div className="relative">
         <Link href={`/product/${slug}`}>
           <Image
-            src={image && image[0]}
+            src={getImageSrc(image)}
             alt={name}
             width={555}
             height={555}

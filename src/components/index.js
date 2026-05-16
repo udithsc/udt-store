@@ -6,3 +6,4 @@ export { default as FeaturedProducts } from './FeaturedProducts';
 export { default as CategorySection } from './CategorySection';
 export { default as BestSellers } from './BestSellers';
 export { default as PromoBanner } from './PromoBanner';
+export { default as HomeContent } from './HomeContent';

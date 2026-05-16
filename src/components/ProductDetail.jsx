@@ -16,19 +16,53 @@ import { BsCheck } from 'react-icons/bs';
 import { Product } from './';
 import useCartStore from '../stores/cartStore';
 import useWishlistStore from '../stores/wishlistStore';
+import useCMSStore from '../stores/cmsStore';
 import { useRouter } from 'next/navigation';
 
-const ProductDetail = ({ product, products }) => {
-  const { image, name, details, price, originalPrice, rating, reviews, category, inStock, badges } =
-    product;
+const ProductDetail = ({ slug }) => {
   const [index, setIndex] = useState(0);
   const [activeTab, setActiveTab] = useState('description');
   const router = useRouter();
   const { decQty, incQty, qty, onAdd } = useCartStore();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore();
+  const cmsProducts = useCMSStore((state) => state.products);
+  const isLoaded = useCMSStore((state) => state.isLoaded);
+  const activeProducts = cmsProducts || [];
+  const activeProduct = activeProducts.find((item) => item.slug === slug);
+  const { image, name, details, price, originalPrice, rating, reviews, category, inStock, badges } =
+    activeProduct || {};
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 py-16 text-center text-gray-600">
+          Loading product...
+        </div>
+      </div>
+    );
+  }
+
+  if (!activeProduct) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 py-16 text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-4">Product not found</h1>
+          <p className="text-gray-600 mb-8">
+            This product is not available in the current catalog.
+          </p>
+          <Link
+            href="/shop"
+            className="inline-block bg-primary text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200 font-semibold"
+          >
+            Back to Shop
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const handleBuyNow = () => {
-    onAdd(product, qty);
+    onAdd(activeProduct, qty);
     router.push('/cart');
   };
 
@@ -49,7 +83,9 @@ const ProductDetail = ({ product, products }) => {
   };
 
   const relatedProducts =
-    products?.filter((p) => p.category === category && p._id !== product._id)?.slice(0, 4) || [];
+    activeProducts
+      ?.filter((p) => p.category === category && p._id !== activeProduct._id)
+      ?.slice(0, 4) || [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -178,7 +214,7 @@ const ProductDetail = ({ product, products }) => {
                 <button
                   type="button"
                   className="flex-1 bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium"
-                  onClick={() => onAdd(product, qty)}
+                  onClick={() => onAdd(activeProduct, qty)}
                   disabled={!inStock}
                 >
                   Add to Cart
@@ -196,19 +232,21 @@ const ProductDetail = ({ product, products }) => {
               <div className="flex items-center space-x-4 pt-4 border-t">
                 <button
                   onClick={() =>
-                    isInWishlist(product._id)
-                      ? removeFromWishlist(product._id)
-                      : addToWishlist(product)
+                    isInWishlist(activeProduct._id)
+                      ? removeFromWishlist(activeProduct._id)
+                      : addToWishlist(activeProduct)
                   }
                   className={`flex items-center space-x-2 transition-colors ${
-                    isInWishlist(product._id) ? 'text-red-500' : 'text-gray-600 hover:text-red-500'
+                    isInWishlist(activeProduct._id)
+                      ? 'text-red-500'
+                      : 'text-gray-600 hover:text-red-500'
                   }`}
                 >
                   <AiOutlineHeart
-                    className={`w-5 h-5 ${isInWishlist(product._id) ? 'fill-current' : ''}`}
+                    className={`w-5 h-5 ${isInWishlist(activeProduct._id) ? 'fill-current' : ''}`}
                   />
                   <span>
-                    {isInWishlist(product._id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+                    {isInWishlist(activeProduct._id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
                   </span>
                 </button>
                 <button className="flex items-center space-x-2 text-gray-600 hover:text-blue-500 transition-colors">
@@ -290,7 +328,7 @@ const ProductDetail = ({ product, products }) => {
                       </div>
                       <div className="flex justify-between">
                         <dt className="text-gray-600">SKU:</dt>
-                        <dd className="font-medium">{product._id}</dd>
+                        <dd className="font-medium">{activeProduct._id}</dd>
                       </div>
                       <div className="flex justify-between">
                         <dt className="text-gray-600">Weight:</dt>

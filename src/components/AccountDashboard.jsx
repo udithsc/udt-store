@@ -19,6 +19,7 @@ const AccountDashboard = () => {
     orderId: '',
     email: '',
   });
+  const [orderTrackMessage, setOrderTrackMessage] = useState('');
   const [loginData, setLoginData] = useState({
     email: '',
     password: '',
@@ -45,8 +46,9 @@ const AccountDashboard = () => {
 
   const handleOrderTrack = (e) => {
     e.preventDefault();
-    // Handle order tracking logic here
-    console.log('Track order:', orderTrackData);
+    setOrderTrackMessage(
+      `Tracking request prepared for ${orderTrackData.orderId || 'your order'}.`
+    );
   };
 
   const menuItems = [
@@ -96,6 +98,11 @@ const AccountDashboard = () => {
           >
             Track
           </button>
+          {orderTrackMessage && (
+            <p className="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg px-4 py-3">
+              {orderTrackMessage}
+            </p>
+          )}
         </form>
       </div>
     </div>

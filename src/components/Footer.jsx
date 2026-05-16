@@ -1,9 +1,14 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { AiFillInstagram, AiOutlineTwitter, AiFillFacebook, AiFillYoutube } from 'react-icons/ai';
 import { FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
+import useCMSStore from '../stores/cmsStore';
 
 const Footer = () => {
+  const storeSettings = useCMSStore((state) => state.storeSettings);
+
   return (
     <footer className="bg-gray-900 text-white">
       {/* Newsletter Section */}
@@ -36,7 +41,7 @@ const Footer = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Company Info */}
             <div>
-              <h3 className="text-xl font-bold mb-6">UDT Store</h3>
+              <h3 className="text-xl font-bold mb-6">{storeSettings.storeName}</h3>
               <p className="text-gray-300 mb-6">
                 Your one-stop destination for fresh groceries and daily essentials. We provide
                 quality products at affordable prices.
@@ -48,11 +53,11 @@ const Footer = () => {
                 </div>
                 <div className="flex items-center space-x-3">
                   <FiPhone className="w-5 h-5 text-primary" />
-                  <span className="text-gray-300">+1 (800) 123-4567</span>
+                  <span className="text-gray-300">{storeSettings.supportPhone}</span>
                 </div>
                 <div className="flex items-center space-x-3">
                   <FiMail className="w-5 h-5 text-primary" />
-                  <span className="text-gray-300">info@udtstore.com</span>
+                  <span className="text-gray-300">{storeSettings.supportEmail}</span>
                 </div>
               </div>
             </div>

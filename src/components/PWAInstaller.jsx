@@ -9,14 +9,7 @@ const PWAInstaller = () => {
   useEffect(() => {
     // Register service worker
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/sw.js')
-        .then((registration) => {
-          console.log('Service Worker registered successfully:', registration);
-        })
-        .catch((error) => {
-          console.log('Service Worker registration failed:', error);
-        });
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
     }
 
     // Listen for the beforeinstallprompt event
@@ -30,7 +23,6 @@ const PWAInstaller = () => {
 
     // Listen for the app installed event
     const handleAppInstalled = () => {
-      console.log('PWA was installed');
       setShowInstallButton(false);
       setDeferredPrompt(null);
     };
@@ -51,8 +43,7 @@ const PWAInstaller = () => {
     deferredPrompt.prompt();
 
     // Wait for the user to respond to the prompt
-    const { outcome } = await deferredPrompt.userChoice;
-    console.log(`User response to the install prompt: ${outcome}`);
+    await deferredPrompt.userChoice;
 
     // Clear the deferredPrompt so it can only be used once
     setDeferredPrompt(null);

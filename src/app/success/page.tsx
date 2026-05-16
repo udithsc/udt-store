@@ -1,14 +1,17 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { BsBagCheckFill } from 'react-icons/bs';
 
 import useCartStore from '../../stores/cartStore';
 import { runFireworks } from '../../lib/utils';
 
-const Success = () => {
+const SuccessContent = () => {
   const { clearCart } = useCartStore();
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get('order');
 
   useEffect(() => {
     clearCart();
@@ -22,6 +25,7 @@ const Success = () => {
           <BsBagCheckFill />
         </p>
         <h2>Thank you for your order!</h2>
+        {orderId && <p className="email-msg">Order ID: {orderId}</p>}
         <p className="email-msg">Check your email inbox for the receipt.</p>
         <p className="description">
           If you have any questions, please email
@@ -38,5 +42,11 @@ const Success = () => {
     </div>
   );
 };
+
+const Success = () => (
+  <Suspense fallback={<div className="success-wrapper">Loading...</div>}>
+    <SuccessContent />
+  </Suspense>
+);
 
 export default Success;
