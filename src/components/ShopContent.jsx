@@ -28,14 +28,6 @@ const ShopContent = ({ products }) => {
   const { onAdd } = useCartStore();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlistStore();
 
-  // Handle URL category parameter
-  useEffect(() => {
-    const categoryParam = searchParams.get('category');
-    if (categoryParam) {
-      setFilterCategory(categoryParam.toLowerCase());
-    }
-  }, [searchParams]);
-
   const categories = useMemo(() => {
     const cats = [
       'all',
@@ -51,12 +43,34 @@ const ShopContent = ({ products }) => {
     return cats;
   }, []);
 
+  // Handle URL category parameter
+  useEffect(() => {
+    const categoryParam = searchParams.get('category');
+    if (categoryParam) {
+      const matchedCategory = categories.find(
+        (category) => category.toLowerCase() === categoryParam.toLowerCase()
+      );
+      setFilterCategory(matchedCategory || 'all');
+    } else {
+      setFilterCategory('all');
+    }
+  }, [categories, searchParams]);
+
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = products || [];
+    const searchQuery = searchParams.get('search')?.trim().toLowerCase();
 
     // Filter by category
     if (filterCategory !== 'all') {
       filtered = filtered.filter((product) => product.category === filterCategory);
+    }
+
+    if (searchQuery) {
+      filtered = filtered.filter((product) =>
+        [product.name, product.category, product.details]
+          .filter(Boolean)
+          .some((value) => value.toLowerCase().includes(searchQuery))
+      );
     }
 
     // Filter by price range
@@ -80,7 +94,7 @@ const ShopContent = ({ products }) => {
     });
 
     return filtered;
-  }, [products, filterCategory, priceRange, sortBy]);
+  }, [products, filterCategory, priceRange, sortBy, searchParams]);
 
   const renderStars = (rating) => {
     const stars = [];
@@ -310,6 +324,7 @@ const ShopContent = ({ products }) => {
                   </button>
                   <span className="text-gray-600">
                     Showing {filteredAndSortedProducts.length} products
+                    {searchParams.get('search') && ` for "${searchParams.get('search')}"`}
                   </span>
                 </div>
 

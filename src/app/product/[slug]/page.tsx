@@ -6,10 +6,14 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+interface ProductSummary {
+  slug: string;
+}
+
 export async function generateStaticParams() {
   const products = await getProducts();
 
-  return products.map((product: any) => ({
+  return products.map((product: ProductSummary) => ({
     slug: product.slug,
   }));
 }

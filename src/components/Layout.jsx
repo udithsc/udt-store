@@ -5,6 +5,7 @@ import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import PWAInstaller from './PWAInstaller';
+import { Toaster } from 'react-hot-toast';
 
 const Layout = ({ children }) => {
   return (
@@ -17,6 +18,7 @@ const Layout = ({ children }) => {
         <Footer />
       </footer>
       <PWAInstaller />
+      <Toaster position="bottom-center" />
     </div>
   );
 };

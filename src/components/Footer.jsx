@@ -153,25 +153,33 @@ const Footer = () => {
               </p>
               <div className="flex space-x-4">
                 <a
-                  href="#"
+                  href="https://www.facebook.com/"
+                  target="_blank"
+                  rel="noreferrer"
                   className="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-green-700 transition-colors"
                 >
                   <AiFillFacebook className="w-5 h-5" />
                 </a>
                 <a
-                  href="#"
+                  href="https://x.com/"
+                  target="_blank"
+                  rel="noreferrer"
                   className="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-green-700 transition-colors"
                 >
                   <AiOutlineTwitter className="w-5 h-5" />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.instagram.com/"
+                  target="_blank"
+                  rel="noreferrer"
                   className="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-green-700 transition-colors"
                 >
                   <AiFillInstagram className="w-5 h-5" />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.youtube.com/"
+                  target="_blank"
+                  rel="noreferrer"
                   className="w-10 h-10 bg-primary rounded-full flex items-center justify-center hover:bg-green-700 transition-colors"
                 >
                   <AiFillYoutube className="w-5 h-5" />

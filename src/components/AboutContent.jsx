@@ -2,46 +2,15 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import {
   AiOutlineShoppingCart,
   AiOutlineReload,
   AiOutlineCustomerService,
   AiOutlineGift,
-  AiOutlineMail,
-  AiOutlinePhone,
-  AiOutlineEnvironment,
 } from 'react-icons/ai';
-import { FiTruck, FiShield, FiRefreshCw, FiHeadphones } from 'react-icons/fi';
+import { FiTruck, FiHeadphones } from 'react-icons/fi';
 
 const AboutContent = () => {
-  const services = [
-    {
-      icon: <AiOutlineShoppingCart className="w-12 h-12" />,
-      title: 'Organic Food Services',
-      description:
-        'Fresh and organic products sourced directly from local farms, ensuring the highest quality and nutritional value for your family.',
-    },
-    {
-      icon: <AiOutlineReload className="w-12 h-12" />,
-      title: '100% Return Policy',
-      description:
-        'Not satisfied with your purchase? We offer a hassle-free 100% money-back guarantee within 30 days of purchase.',
-    },
-    {
-      icon: <AiOutlineCustomerService className="w-12 h-12" />,
-      title: '24/7 Support',
-      description:
-        'Our dedicated customer support team is available round the clock to assist you with any queries or concerns.',
-    },
-    {
-      icon: <AiOutlineGift className="w-12 h-12" />,
-      title: 'Great Daily Offers',
-      description:
-        'Enjoy amazing discounts and special deals every day on a wide range of products across all categories.',
-    },
-  ];
-
   const teamMembers = [
     {
       id: 1,

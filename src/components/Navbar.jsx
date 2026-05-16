@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import {
   AiOutlineShopping,
   AiOutlineUser,
@@ -11,16 +12,23 @@ import {
   AiOutlineHeart,
 } from 'react-icons/ai';
 import { FiPhone } from 'react-icons/fi';
-import Image from 'next/image';
 
 import useCartStore from '../stores/cartStore';
 import { useWishlistCount } from '../stores/wishlistStore';
 
 const Navbar = () => {
+  const router = useRouter();
   const { totalQuantities } = useCartStore();
   const wishlistCount = useWishlistCount();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    const query = searchQuery.trim();
+    router.push(query ? `/shop?search=${encodeURIComponent(query)}` : '/shop');
+    setIsMobileMenuOpen(false);
+  };
 
   return (
     <>
@@ -28,14 +36,26 @@ const Navbar = () => {
       <div className="bg-gray-100 py-2 text-sm hidden md:block">
         <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
           <div className="flex items-center space-x-4 text-gray-600">
-            <span>About Us</span>
-            <span>Contacts</span>
-            <span>Store Location</span>
-            <span>Track Order</span>
-            <span>Blog</span>
+            <Link href="/about" className="hover:text-gray-900">
+              About Us
+            </Link>
+            <Link href="/contact" className="hover:text-gray-900">
+              Contacts
+            </Link>
+            <Link href="/contact" className="hover:text-gray-900">
+              Store Location
+            </Link>
+            <Link href="/track-order" className="hover:text-gray-900">
+              Track Order
+            </Link>
+            <Link href="/blog" className="hover:text-gray-900">
+              Blog
+            </Link>
           </div>
           <div className="flex items-center space-x-4 text-gray-600">
-            <span>My Account</span>
+            <Link href="/account" className="hover:text-gray-900">
+              My Account
+            </Link>
             <span>Currency: USD</span>
             <span>Language: EN</span>
           </div>
@@ -55,7 +75,7 @@ const Navbar = () => {
             </div>
 
             {/* Search Bar */}
-            <div className="hidden md:flex flex-1 max-w-2xl mx-8">
+            <form onSubmit={handleSearchSubmit} className="hidden md:flex flex-1 max-w-2xl mx-8">
               <div className="relative w-full">
                 <input
                   type="text"
@@ -64,11 +84,14 @@ const Navbar = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                 />
-                <button className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                <button
+                  type="submit"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2"
+                >
                   <AiOutlineSearch className="w-5 h-5 text-gray-400" />
                 </button>
               </div>
-            </div>
+            </form>
 
             {/* Right Side */}
             <div className="flex items-center space-x-2 md:space-x-6">
@@ -82,7 +105,11 @@ const Navbar = () => {
               </div>
 
               {/* Search Button for Mobile */}
-              <button className="md:hidden p-2 text-gray-600 hover:text-gray-900">
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="md:hidden p-2 text-gray-600 hover:text-gray-900"
+              >
                 <AiOutlineSearch className="w-6 h-6" />
               </button>
 
@@ -185,7 +212,7 @@ const Navbar = () => {
         <div className="md:hidden bg-white border-b border-gray-200 shadow-lg">
           {/* Mobile Search */}
           <div className="px-4 py-3 border-b border-gray-100">
-            <div className="relative">
+            <form onSubmit={handleSearchSubmit} className="relative">
               <input
                 type="text"
                 placeholder="Search products..."
@@ -193,10 +220,10 @@ const Navbar = () => {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
               />
-              <button className="absolute right-3 top-1/2 transform -translate-y-1/2">
+              <button type="submit" className="absolute right-3 top-1/2 transform -translate-y-1/2">
                 <AiOutlineSearch className="w-5 h-5 text-gray-400" />
               </button>
-            </div>
+            </form>
           </div>
 
           {/* Mobile Navigation Links */}

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { AiOutlineClose, AiOutlineShoppingCart, AiOutlineHeart } from 'react-icons/ai';
-import { FiTruck, FiShield, FiRefreshCw } from 'react-icons/fi';
+import { FiTruck, FiShield } from 'react-icons/fi';
 import useWishlistStore from '../stores/wishlistStore';
 import useCartStore from '../stores/cartStore';
 
